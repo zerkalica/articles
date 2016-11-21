@@ -1,13 +1,7 @@
-name: default
-layout: true
-task: &nbsp;
-
-.task[{{task}}]
-
----
 class: center, middle, inverse
 
 # ReactiveDI
+
 ---
 
 # Зачем
@@ -56,7 +50,7 @@ class: center, middle, inverse
 * Прибит к anular2
 * Толстый, много util-кода
 * Не работает с реактивностью
-* Облажались (Angular3)
+* Angular3, что-то не так?
 
 ---
 
