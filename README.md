@@ -1,3 +1,5 @@
 # articles
 
-[reactive-di](https://zerkalica.github.io/articles/reactive-di)
+Some my articles and notes.
+
+* [reactive-di](./reactive-di)
