@@ -29,6 +29,8 @@ class: center, middle, inverse
 | .skyblue[Mark] | 10           | 9             | 9          | 8         | 7        | 6     | 5        | 3     | 1        |
 ]
 
+Бизнес-код vs мелкая фигня
+
 ---
 class: center, middle, inverse
 
@@ -197,7 +199,7 @@ class: center, middle
 
 class: center, middle
 
-# redux vs ... ?
+# Ехал redux через redux...
 ---
 # Virtual DOM (1/1)
 
@@ -389,6 +391,15 @@ class: center, middle, inverse
 # Переиспользование vs refactoring или dumb и smart
 
 ---
+# Переиспользование vs refactoring
+
+<img src="./i/couple.svg" alt="couple" width="730" height="270"/>
+
+* Как сохранить связанность, уменьшая зацепление.
+
+* Или как делать модули простыми, решающими одну небольшую задачу, но знающие минимум об остальных модулях.
+
+---
 
 # Dumb-компоненты
 
@@ -425,6 +436,7 @@ class: center, middle, inverse
 * легко интегрировать и рефакторить
 
 ---
+
 
 # Как делить на Smart и Dumb?
 
