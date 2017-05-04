@@ -1,11 +1,16 @@
 {
   "name": "articles",
   "version": "1.0.0",
-  "description": "Some my articles",
-  "main": "index.js",
+  "description": "Some my presentaitons",
+  "bin": {
+    "articles-builder": "bin/articles-builder"
+  },
   "scripts": {
-    "test": "mocha",
-    "start": "node index.js"
+    "test": "exit 0",
+    "prepush": "npm run build",
+    "start": "reveal-md --highlight-theme dracula --theme custom -w",
+    "s:holy2017": "npm run start -- src/holyjs-2017/holyjs-2017.md",
+    "build": "bin/articles-builder"
   },
   "repository": {
     "type": "git",
@@ -27,8 +32,11 @@
     "url": "https://github.com/zerkalica/articles/issues"
   },
   "homepage": "https://github.com/zerkalica/articles#readme",
-  "dependencies": {
-    "finalhandler": "^0.5.1",
-    "serve-static": "^1.11.1"
+  "devDependencies": {
+    "fs-extra": "^2.1.2",
+    "husky": "^0.13.3",
+    "phantomjs": "^2.1.7",
+    "reveal-md": "^0.1.3",
+    "rimraf": "^2.6.1"
   }
 }

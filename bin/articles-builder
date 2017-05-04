@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+
+var path = require('path')
+var os = require('os')
+var fs = require('fs-extra')
+var spawn = require('child_process').spawn
+
+var revealPath
+try {
+    revealPath = path.dirname(require.resolve('reveal-md'))
+} catch (e) {
+    revealPath = path.resolve(__dirname, '..', 'node_modules', 'reveal-md')
+}
+var revealBinPath = path.join(revealPath, 'bin', 'cli.js')
+var srcRoot = path.join('src')
+var siteRoot = path.join(__dirname, '..', 'site')
+
+var defaultTheme = 'white'
+
+function process(spawnArgs, next) {
+    console.log(revealBinPath, spawnArgs.join(' '))
+    var child = spawn(revealBinPath, spawnArgs)
+
+    child.on('error', (err) => {
+        console.error(err)
+    })
+
+    child.on('close', next)
+
+    child.stdout.on('data', (data) => console.log(data.toString()))
+    child.stderr.on('data', (data) => console.error(data.toString()))
+}
+
+function processDir(dirNames, onStop, idx, files) {
+    idx = idx || 0
+    files = files || []
+    var dirName = dirNames[idx]
+    if (!dirName) {
+        onStop(files)
+        return
+    }
+    function next() {
+        processDir(dirNames, onStop, idx + 1, files)
+    }
+    if (dirName.indexOf('.md') !== -1) {
+        next()
+        return
+    }
+
+    var srcPath = path.join(srcRoot, dirName, `${dirName}.md`)
+    var spawnArgs = [
+        '--highlight-theme',
+        'dracula',
+        srcPath,
+        '--theme',
+        defaultTheme,
+        '--static',
+        siteRoot
+    ]
+    files.push(dirName)
+
+    process(spawnArgs, () => {
+        fs.renameSync(
+            path.join(siteRoot, 'index.html'),
+            path.join(siteRoot, `${dirName}.html`)
+        )
+        const assetsDir = path.resolve(srcRoot, dirName, 'i')
+        console.log(assetsDir)
+        fs.copySync(assetsDir, path.join(siteRoot, 'i'))
+
+        var newArgs = [
+            srcPath,
+            '--theme',
+            defaultTheme,
+            '--print',
+            path.join(siteRoot, `${dirName}.pdf`)
+        ]
+
+        process(newArgs, next)
+    })
+}
+
+function getTemplate(
+    {title, names}
+) {
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <title>${title}</title>
+</head>
+<body>
+<ul>
+  ${names.map((name) =>
+      `<li>
+        <a href="./${name}.html">${name}</a>
+      </li>`
+  ).join(' ')}
+</ul>
+</body>
+</html>
+`
+}
+
+fs.removeSync(siteRoot)
+
+function dirExists(dirPath) {
+  try {
+    return fs.statSync(dirPath).isDirectory()
+  } catch (err) {
+    return false
+  }
+}
+
+processDir(fs.readdirSync(srcRoot), (names) => {
+  var opts = {
+    names,
+    title: 'some my articles'
+  }
+  fs.writeFileSync(path.join(siteRoot, 'index.html'), getTemplate(opts))
+})

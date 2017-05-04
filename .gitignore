@@ -15,3 +15,5 @@ tags
 *.map
 /*.sh
 /__tests__
+private
+*.private.md
