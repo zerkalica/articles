@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Как прекратить войну фреймворков</title>
         <link rel="stylesheet" href="./css/reveal.css">
-        <link rel="stylesheet" href="./css/theme/white.css" id="theme">
+        <link rel="stylesheet" href="./theme/custom.css" id="theme">
         <link rel="stylesheet" href="./css/highlight/dracula.css">
         <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
 
@@ -22,7 +22,7 @@
 
 <img src="./i/good-the-bad-and-the-ugly.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>У Petka Antonov, создателя bluebird промисов, есть статья &quot;Убийцы оптимизации&quot; (Optimization killers). Где говорится каких конструкций в коде следует избегать, что бы код не стал менее производительным. Аналогично, я попробую рассказать об &quot;убийцах архитектуры&quot;, т.к. коде, который затрудняет поддержку программ, навигацию по ее модулям, ведет к появлению багов в run time, а не в compile time.</p>
+<aside class="notes"><p>У Petka Antonov, создателя bluebird промисов, есть статья &quot;Убийцы оптимизации&quot; (Optimization killers). Где говорится каких конструкций в коде следует избегать, что бы код не стал менее производительным. Аналогично, я попробую рассказать об &quot;убийцах архитектуры&quot;, т.к. коде, который затрудняет поддержку программ, интеграцию модулей, ведет к появлению багов в run time, а не в compile time и решении их.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### А что не так?
 
@@ -36,21 +36,21 @@
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Слои
 
-<aside class="notes"><p>Это слои - данные, представления, логика. Деление такое не с проста. Если мы меняем view слой, то это затронет только его, если логику, то изменятся и представление, если структуру данных - это затронет все слои. Иными словами: что чаще меняем, то делаем менее связаным с остальными частями.</p>
+<img src="i/mvc.svg" height="350" width="360" class="plain" />
+
+<aside class="notes"><p>Это слои - данные, представления, логика. Вместо C может быть что угодно. Деление такое не с проста. Если мы меняем view слой, то это затронет только его, если логику, то изменятся и представление, если структуру данных - это затронет все слои. Иными словами: что чаще меняем, то делаем менее связаным с остальными частями.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Связи
 
+<img src="i/arrow-big.png" height="400" class="plain" />
+
 <aside class="notes"><p>Я упомянул связи. Они бывают сильные: когда extends React.Component или React.createElement замаскированный под jsx. Так и слабые: интерфейсы на props, использование React.context вместо import. Для масштабирования и поддержки большого приложения важны как раз слабые связи. Однако сильные связи упрощают навигацию по проекту и отладку в отсутствии мощных IDE и др. инструментов разработчика.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-### Кирпичи
-
-<aside class="notes"><p>Есть еще базовые кирпичи - это функции, которые мы рассовываем по слоям и связываем между собой. Сами функции бывают с контекстом или чистые. Классы можно свести к функциям, контекст которых это this.</p>
-</aside></script></section><section  data-markdown><script type="text/template">
-#### Чистые функции и состояние
+#### Кирпичи
 
 <img src="./i/pure-impure.svg" width="500" alt="Pure and impure fns" class="plain" />
 
-<aside class="notes"><p>Рассмотрим компоненты - частный случай для UI слоя. К примеру, все, кто программировал на реакте, знают, что компоненты бывают чистые и с состоянием. Поведение первых зависит только от свойств, вторые от свойств и еще от состояния.</p>
+<aside class="notes"><p>Есть еще базовые кирпичи - это функции, которые мы рассовываем по слоям и связываем между собой. Сами функции бывают с контекстом или чистые. Классы можно свести к функциям, контекст которых это this. Рассмотрим компоненты - частный случай для UI слоя. К примеру, все, кто программировал на реакте, знают, что компоненты бывают чистые и с состоянием. Поведение первых зависит только от свойств, вторые от свойств и еще от состояния.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Чистый компонент
 
@@ -235,8 +235,24 @@ class CounterView {
 
 <aside class="notes"><p>Однако и тут есть ложка дегдя и не одна, например CounterView - это реактивная модель со свойством counter и сервис c addCounter, прибито это все через декоратор @Component к шаблону counter.component.html. Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. Поимев проблемы с выведением типов в html-шаблоне, если JSX flow понимает, то тут только за счет сторонних решений, плагинов к IDE и т.д, которые заведомо в этой области будут хуже работать, чем typescript, т.к. он специализированный инструмент.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-### redux
-</script></section><section  data-markdown><script type="text/template">
+### redux+
+
+- time travel
+- Transaction log
+- CRDT
+
+<aside class="notes"><p>redux хорошее решение, когда вам нужно time travel, логирование, распределенность.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+### redux-
+
+- Шаблонный код
+- Сложнее менять состояние
+- Центральное состояние
+- Простая база, но бесполезная без сложного окружения
+- Middleware + async
+
+<aside class="notes"><p>Но redux это не про то, как уменьшить кол-во шаблонного кода, не про то, как проще поменять состояние, не про то, как разделить состояние на много кусочков т.к. основная идея - это центральный стейт. Это все можно конечно сделать, но путем дополнительных усложнений, в виде redux-thunk, saga, мидлвар, часто не очень понятных в цепочке. Кто пробовал раскрутить пример цепочки мидлвар из официальной документации redux, тот поймет.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
 ```js
 // ...
 // single state - less modularity
@@ -258,7 +274,7 @@ const store = createStore(reducer)
 // flow check: Found 0 errors
 ```
 
-<aside class="notes"><p>в react-redux (как и в mobx-react) React.context пытаются упрятать в Provider. И тут несколько проблем. Во первых, несмотря на интерфейс, state в mapStateToProps приходит от всего приложения, т.е. центральное состояние нарушает модульность приложения. Во вторых, нет сопоставления типов состояния и редьюсеров в combineReducers. state.user undefined, т.к.  в combineReducers я ошибся и написал xyz вместо user, а в mapStateToProps state.user будет undefined и flowtype не отловит это. В третьих, никак не проверяется интерфейс того, что мы подали в Provider. В четвертых, в контекст через провайдер нельзя передать сервис, только стор. В пятых, задача контекста, которую решает Provider, не имеет отношения ни к react, ни к ui, она относится к способу связывания слоев в приложении, к внедрению зависимостей.</p>
+<aside class="notes"><p>Рассмотрим react-redux (как и в mobx-react). Во первых, несмотря на интерфейс, state в mapStateToProps приходит от всего приложения, т.е. центральное состояние нарушает модульность приложения. Во вторых, нет сопоставления типов состояния и редьюсеров в combineReducers. state.user undefined, т.к.  в combineReducers я ошибся и написал xyz вместо user, а в mapStateToProps state.user будет undefined и flowtype не отловит это. В третьих, никак не проверяется интерфейс того, что мы подали в Provider. В четвертых, в контекст через провайдер нельзя передать сервис, только стор. В пятых, задача контекста, которую решает Provider, не имеет отношения ни к react, ни к ui, она относится к способу связывания слоев в приложении, к внедрению зависимостей.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
 declare class Provider<S, A> extends React$Component<
@@ -282,7 +298,16 @@ declare class Provider<S, A> extends React$Component<
 <aside class="notes"><p>Таких примеров много, ReactRouter, ReactSideEffect, ReactHelmet - это все реализация контроллеров в слое с шаблонами.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
-function CaseComponent({routerState}) {
+
+class RouterState {
+  path: string
+}
+
+function CaseComponent(
+  {routerState}: {
+    routerState: RouterState
+  }
+) {
   switch (routerState.path) {
     case '/': return App
     case 'foo': return Foo
@@ -291,7 +316,7 @@ function CaseComponent({routerState}) {
 }
 ```
 
-<aside class="notes"><p>А ведь достаточно просто развязать это все через состояние. Строка браузера влияет на состояние, например mobx, а дальше делается CaseComponent, который уже выбирает нужный. И не надо прибивать роутинг к реакту, а потом делать убыстренный клон реакта inferno, и копипастиь его туда, также как inferno-mobx, inferno-redux, и еще несколько.</p>
+<aside class="notes"><p>А ведь достаточно просто развязать это все через состояние. Строка браузера влияет на состояние, например mobx, а дальше делается CaseComponent, который уже выбирает нужный. И не надо прибивать роутинг к реакту, а потом делать убыстренный клон реакта inferno, и копипастиь его туда, как с inferno-router.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 Прибитость React:
 
@@ -305,25 +330,33 @@ this.setState({counter: 123})
 dispatch({type: 'INCREMENT', val: 123})
 ```
 
-Магия Angular2:
+Компонент Angular2:
 
 ```js
 this.heroes = heroes
 ```
 
-Магия Mobx:
+Модели Mobx:
 
 ```js
 store.counter = 123
 ```
 
-<aside class="notes"><p>Каждый предлагает свой способ менять состояние. setState - прибит к реакту, что бы изменить состояние в редукс, компонент должен знать о интерфейсе dispatch, знать о интерфейсе экшена, либо писать дополнительный код для адаптации к redux-thunk. В ангуларе вся магия работает почему-то только в компоненте. mobx самый оптимальный вариант. К тому же, это самый простой интерфейс по чтению/записи состояния. Ключевой момент, он не предполагает завязанности на какую-либо библиотеку.</p>
+<aside class="notes"><p>Каждый предлагает свой способ менять состояние. setState - прибит к реакту, что бы изменить состояние в редукс, компонент должен знать об интерфейсе dispatch и об экшене, либо придется писать дополнительный код для адаптации к redux-thunk. Такой подход череват шаблонным кодом, особенно если использовать типизацию и сложность внедрения этой самой типизации. В ангуларе состояние изменить проще, но вся эта магия работает почему-то только в компоненте. mobx предоставляет самый простой интерфейс по чтению/записи состояния. Ключевой момент, последний способ он не предполагает завязанности на какую-либо библиотеку.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-### Оптимизация
+Оптимизация
 
-Оптимизации - код, который не имеет отношения к результату задачи, но содержит баги.
+### 5 > 3
 
-<aside class="notes"><p>Если речь заходит об оптимизации в коде приложениея, то смело выкидывайте фреймворк на котором вы пишите. Я хорошо помню, как с появлением react было много хайпа о том, что VDOM, лежащий в его основе, настройко быстрый, что делает оптизизацию за вас. По сути - это кэш перед выводом в браузер. Тем не менее вам дается фича (а точнее костыль) вроде shouldComponentUpdate, которая позволяет делать тонкую оптимизацию (точнее неявно создавать баги и плодить инфрастуктурный код)</p>
+<img src="i/lineika.jpg" class="plain" />
+
+<aside class="notes"><p>Про оптимизацию слишком много хайпа, в основном, все современные тенденции во фронтенде это про то, кто больше попугаев покажет в ui-bench: fiber, vdom, prepack, inferno. Оптимизация нужна из-за отставания браузеров от бизнес задач и медленной скорости их развития из-за легаси из которого состоит web. Так проще конкурировать, цифрами убедить проще, т.к. меньше надо знать. React 3 попугая выдает, Inferno 5, значит Inferno лучше. Конкурировать, доказывая архитектурные преимущества, гораздо сложнее.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+Оптимизации в приложении
+
+<img src="i/vdom.png" class="plain" />
+
+<aside class="notes"><p>С появлением react было много хайпа о том, что VDOM, лежащий в его основе, настолько быстрый, что делает оптизизацию в приложении не нужной. Однако, добавив кэш (VDOM) перед выводом в браузер, получили проблему инвалидации кэша, которая требует некоторых вычислений.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### React
 
@@ -348,7 +381,7 @@ class CounterView extends React.Component {
 }
 ```
 
-<aside class="notes"><p>Код, отвечающий за оптимизацию в вашем приложении, замечательный. Он помогает вам скоротать немало часов, отлавливая баги на продакшене и flow с ts тут беcсильны. А код с forceUpdate считается не нормальный в react. А вы заметили тут баг?</p>
+<aside class="notes"><p>Упрощают вычисления через shouldComponentUpdate, который позволяет делать тонкую оптимизацию, точнее неявно создавать баги и смешивать бизнес код с инфрастуктурным кодом, не имеющим отношения к иходной задаче. Костыль этот существует потому, что react начали проектировать с конца, с view слоя, а не со слоя данных, Если было бы иначе, решений, подобных VDOM с shouldComponentUpdate, не было бы на свете вовсе. А пока, код, отвечающий за оптимизацию в вашем приложении, помогает вам скоротать немало часов, отлавливая баги на продакшене. А вы нашли тут багу, не? Вот flow не нашел.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Angular
 
@@ -368,50 +401,74 @@ class CounterView {
 }
 ```
 
-<aside class="notes"><p>Но почему-то такой код считается нормальным в angular2. По-умолчанию, ангулар считает, что любое свойство в компоненте - Observable и оборачивает его, так что присвоение this.counter, вызывает ререндеринг. Это тормозной на больших приложениях механизм, который правильнее было бы не делать в ангуларе вовсе, а вынести в стороннее решение, вроде mobx.</p>
+<aside class="notes"><p>Думаете в angular2 лучше? По-умолчанию, ангулар считает, что любое свойство в компоненте - Observable и оборачивает его, так что присвоение this.counter, вызывает ререндеринг. Это видимо тормозной на больших приложениях механизм, который правильнее было бы не делать в ангуларе вовсе, а вынести в стороннее решение, вроде mobx. Тут changeDetection.OnPush такой же костыль как и shouldComponentUpdate.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+<img src="i/divan_na_kolesa.jpg" height="500" class="plain" />
+
+<aside class="notes"><p>Это я к тому, что оптимизация в коде приложения не нормальное явление, как нам пытаются преподнести из многочисленных маркетинговых докладов. Это признание несостоятельности идеи или реализации фреймворка касательно автоматической оптимизиации. Идея определяет резервы оптимизации, а хорошие алгоритмы только помогут полнее их реализовать, как в Inferno.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Mobx
 
 ```js
-function CounterView({count, name}: {count: number; name: string}) {
-  return <div>{name}: {count}</div>
+const CounterView = observer(({count}) => <div>{count}</div>)
+const NameView = observer(({name}) => <div>{name}</div>)
+
+const AppView = observer(store => <div>
+  <CounterView count={store.count}/>
+  <NameView name={store.name}/>
+</div>)
+
+class Store {
+  @observable count: number = 0
+  @observable name: string = 'test'
 }
 
-const CounterContainer =  observer(CounterView)
-
-<CounterContainer />
+<AppView store={new Store()} />
 ```
 
-<aside class="notes"><p>Про оптимизацию в mobx-подобных решениях. Тут все гораздо лучше, т.к. оптимизация происходит раньше, в слое данных, а не в VDOM (react) или в компонентах (angular)</p>
+<aside class="notes"><p>Но, резервов оптимизации гораздо больше в mobx-подобных решениях (derivable, cellx, mol). Оптимизация происходит раньше, в слое данных, а не в VDOM (react) или в компонентах (angular). В подобных решения VDOM не нужен. Однако все-равно остается вопрос, какие компоненты делать observer-ами? Это что-то вроде дилемы, куда пихать shouldComponentUpdate, а куда нет. Как я говорил ранее, в хорошем фреймворке ее быть не должно, должна решать автоматизация. Допустим, автоматизация решила, что все компоненты - обсерверы, то тогда возникают лишние ререндеры, т.к. обращение в компоненте к store.count означает подписывание на изменения в этом свойстве. Т.к. обращение происходит и в AppView и в CounterView, то при изменении count, будут переренедрены они оба, хотя достаточно только CounterView. Это обратная сторона ненавязчивости mobx-стримов, в том, что unboxing, разворачивание стримов происходит там, где не надо и здесь еще много работы.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-### Плохо
+### Монолитные анализаторы
 
-- Оптимизации в коде приложения
-- Смешение слоев setState, component+model+service
-- Выдумывание базовых вещей: React.createClass, new Vue({data, watch, computed, methods})
-- Завязка на библиотеки: React.createElement
-- Маркетинговые бенчмарки
-</script></section><section  data-markdown><script type="text/template">
+- Прибить jsx к flow
+- Прибить React.Component к flow <!-- .element: class="fragment" data-fragment-index="1" -->
+- Прибить angular2 templates к typescript <!-- .element: class="fragment" data-fragment-index="2" -->
+
+<aside class="notes"><p>Ребята из фейсбука придумали jsx и flow, который понимает этот самый jsx, относительно компонент с состоянием - flow просто прибит гвоздями к реакту. Там в коде есть прямая зависимость анализатора от extends React.Component. А что делать ребятам из deku, vue? Переизобретать свой flow, как они это сделали с redux (vuex)? А typescript еще более монолитный - это не только анализатор, а еще компилятор, для которого до недавнего времени нельзя было даже свой transformation-plugin написать. Например поддержка шаблонов angular2 в ts просто прибита гвоздями по аналогии с jsx, компилятор знает о фреймворке.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+### Переизобретение и копипаст
+
+- redux/vuex
+- {React, Vue, Inferno, Redux, Mobx}-router
+- inferno-{redux, mobx}
+
+<aside class="notes"><p>Следствия плохо спроектированной базы: связей и слоев, которое, в свою очередь, следствие хилого наследия javascript: типов долго небыло, сильная фрагментация надстроек над js.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
 <img src="./i/ternii.jpg" height="500" class="plain" />
 
 Путь тернист и конца пока не видно
-</script></section><section  data-markdown><script type="text/template">
+
+<aside class="notes"><p>Как прекратить войну фреймворков. Я пытаюсь озвучить критерии для тех, кто хочет объективно оценивать фреймворки, а не вестись на хайп. Экспериментаторам, которые пытаются писать свои, привнося что-то новое.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
 ### Что стоит пытаться делать?
 
-- Каркас для связей слоев data - ui - code (DI)
-- Изоляция: интерфейсы <!-- .element: class="fragment" data-fragment-index="1" -->
-- Интеграция: ng-modules, ide, flow, ts <!-- .element: class="fragment" data-fragment-index="2" -->
-- Модульное безопасное состояние (mobx)<!-- .element: class="fragment" data-fragment-index="3" -->
-- Оптимизацию задвинуть за сцену<!-- .element: class="fragment" data-fragment-index="4" -->
-- Упростить рефакторинг O(depth * props + state) <!-- .element: class="fragment" data-fragment-index="5" -->
-- Оставаться KISS, BYO <!-- .element: class="fragment" data-fragment-index="6" -->
+- Каркас для связей data - ui - business logic, DI
+- Экосистема: типы, поддержка в ide: JSX<!-- .element: class="fragment" data-fragment-index="0" -->
+- Безопасное модульное состояние (mobx)<!-- .element: class="fragment" data-fragment-index="1" -->
+- Иерархическая интеграция: ng-modules <!-- .element: class="fragment" data-fragment-index="2" -->
+- Оптимизацию задвинуть за сцену<!-- .element: class="fragment" data-fragment-index="3" -->
+- Упростить рефакторинг O(depth * props + state) <!-- .element: class="fragment" data-fragment-index="4" -->
+- Баласировать между KISS и di-окружением<!-- .element: class="fragment" data-fragment-index="5" -->
 
-<aside class="notes"><p>Это критерии для тех, кто хочет объективно оценивать фреймворки, а не просто вестись на хайп. Экспериментаторам, которые пытаются писать свои, привнося что-то новое. Вся свистопляска фремворков вокруг компонента - это как покрасивше оформить, да и что б всякие flow с typescript atom-ами работали, копипасты небыло.</p>
+<aside class="notes"><ol>
+<li>DI - это ключ. Фреймворк должен быть изолированным набором библиотек, связанных через инверсию зависимостей, каждая библиотека со своей маленькой ответственностью (никаких state и context в ui). 2. Проектируя фреймворк, думать в первую очередь о типах и безопасности на всех уровнях MVC. 3. Должна быть настоящая модульность, центральное состояние, как в redux, не годится. 4. Фреймворк должен помогать строить приложение из иерархически выстроеных мини-приложений, которые интегрируются в общую шину, ng-modules хороший пример, аналогов которому я не нашел в мире react. 5. Оптимизация в слое фреймворка, а не приложения. 6. Стремиться делать фреймворк таким, что бы упрощался рефакторинг. 7. Оставаться простым и искать компромис между хилыми возможностями js/babel/flow/typescript платформ и быть дружественным к DI.</li>
+</ol>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### reactive-di
 
+<img src="i/mvc-rdi.svg" height="300" class="plain" />
 
-<aside class="notes"><p>В начале я упоминал reactive-di. Коротко расскажу про эту библиотеку.</p>
+<aside class="notes"><p>Цель доклада не была рассказать о reactive-di. Я просто несколько штрихов наброшу</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Model
 
@@ -421,14 +478,16 @@ class Counter {
 }
 ```
 
-<aside class="notes"><p>Вот, например, как выглядит модель. Чистый класс с дефолтными свойствами, без методов. Легко сериализуется, всегда есть значение по-умолчанию, что бы избежать undefined багов.</p>
+<aside class="notes"><p>Вот, например, как выглядит модель. Начальное состяние и контракт в одном флаконе. При таком подходе не может быть undefined-багов, не нужно дополнительных сериализаторов/десереализаторов. На основе моделей также делаются локализации, реактивные стили через jss. Не содержит декораторов или любых других зависимостей от фреймворка.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### View
 
 ```js
 function CounterView(
+    // public:
     {name}: { name: string; },
 
+    // private:
     {counter, actions}: {
       counter: Counter;
       actions: CounterActions;
@@ -441,7 +500,7 @@ function CounterView(
 }
 ```
 
-<aside class="notes"><p>Чистая верстка, с контрактом и разделением на публичный интрефейс (props) и приватный (context). createElement, скрыт и подставляется babel-плагином.</p>
+<aside class="notes"><p>Чистая верстка, с контрактом и разделением на публичный интрефейс (props) и приватный (context)</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Action
 
@@ -461,7 +520,7 @@ function CounterView(
 }
 ```
 
-<aside class="notes"><p>Сервис, которые предоставляют методы, по сути экшены, меняющие состояние: тут может быть валидацая, fetch на сервер и т.д.</p>
+<aside class="notes"><p>Сервис, которые предоставляют компоненту методы, по сути экшены, меняющие состояние: тут может быть валидация, запрос на сервер и т.д. В отличие от традиционного DI, зависимость может быть от модели данных (в ангуларе это ValueProvider), только это value реактивно. При выполнении метода add, CounterActions переинициализируется с новым значением, т.е. reactive-di это стримы, упрятаные внутрь di.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Lifecycle
 
@@ -479,8 +538,14 @@ class CounterHooks {
 }
 ```
 
-<aside class="notes"><p>Логика актуализации состояния Counter задается в специальных сервисах. Rогда первый раз отрендерился хотя бы один компонент использующий модель Counter, выполнится pull и состояние Observable c этого момента будет управлять Counter ом.</p>
+<aside class="notes"><p>Часто бывает так, компонент отрендерился и вам нужно актуализировать его состояние. Тут помогают механизмы, которые есть в некоторых ORM на других языках (Doctrine, Hibernate). Логика актуализации состояния Counter задается в таком сервисе. Когда первый раз отрендерится хотя бы один компонент, использующий Counter, выполнится метод pull и Observable c этого момента будет управлять Counter ом. В mobx аналогично сделан хелпер where, в cellx и mol есть похожие механизмы.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
+<img src="i/mvc.svg" height="350" width="360" class="plain" />
+
+- React - стримы в компоненте (View)
+- Mobx - ненавязчивые стримы в приложении (Model)
+- Reactive-di - все MVC внутри стримов (Relations)
+</script></section><section  data-markdown><script type="text/template">
 - [github.com/zerkalica/reactive-di](https://github.com/zerkalica/reactive-di)
 </script></section></div>
         </div>

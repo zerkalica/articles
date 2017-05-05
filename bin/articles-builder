@@ -15,7 +15,7 @@ var revealBinPath = path.join(revealPath, 'bin', 'cli.js')
 var srcRoot = path.join('src')
 var siteRoot = path.join(__dirname, '..', 'docs')
 
-var defaultTheme = 'white'
+var defaultTheme = 'custom'
 
 function process(spawnArgs, next) {
     console.log(revealBinPath, spawnArgs.join(' '))
@@ -67,6 +67,19 @@ function processDir(dirNames, onStop, idx, files) {
         const assetsDir = path.resolve(srcRoot, dirName, 'i')
         console.log(assetsDir)
         fs.copySync(assetsDir, path.join(siteRoot, 'i'))
+        const defaultThemeFile = `${defaultTheme}.css`
+        try {
+            fs.mkdirSync(path.join(siteRoot, 'theme'))
+        } catch (e) {
+            // oops
+        }
+
+        fs.writeFileSync(
+          path.join(siteRoot, 'theme', defaultThemeFile),
+          fs.readFileSync(path.resolve(srcRoot, '..', 'theme', defaultThemeFile))
+            .toString()
+            .replace(/\.\.\/css/, 'css')
+        )
 
         var newArgs = [
             srcPath,
