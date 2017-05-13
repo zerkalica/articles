@@ -159,33 +159,61 @@ function CounterView({count}, h: CreateElement) {
 <aside class="notes"><p>Из-за сложности рефакторинга O(depth * props), в реальном приложении не бывает только чистых компонент. Есть еще компоненты с состоянием, то, что отличает фронтенд от бэкенда. Из-за state компонент кастомизировать сложнее, т.к. вся логика вокруг state - это приватные детали его реализации и расширять их мы больше не можем. Заранее не всегда можно сказать, потребуется ли менять или расширять их. Но с этим мирятся, т.к. приложение, где много компонент с состоянием легче рефакторить, публичных свойств меньше - часть их перетекает в state.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
+class CounterView
+  extends React.Component<void, {name: string}, {count: number}> {
 
-class CounterView extends React.Component<void, {name: string}, *> {
   state = {count: 1}
   constructor(props: Props) { super(props) }
 
   render() {
+    const increment = () => this.setState(({count}) => {
+      count: count + 1
+    })
+
     return <div>
       {this.props.name}: {this.state.count}
-      <button onClick={
-
-        () => this.setState(({count}) => {
-          count: count + 1
-        })
-
-      }>Add</button>
+      <button onClick={increment}>Add</button>
     </div>
   }
 }
 ```
 
-<aside class="notes"><p>А вот React-реализация такого компонента. Некоторые из ограничений такой реализации: React.Component - прямая завязка на реакт, без которой, к нему гвоздями прибитые flow и typescript не помогут выявить ошибки в props. Конструктор подчиняется неким негласным соглашением, что первый аргумент только props. setState - привязка к способу реакта менять состояние. Такой компонент нельзя использовать где-то вне реакта. Ключевой момент, тут нарушен принцип изоляции слоев - в UI присутствует и логика и верстка и состояние и нет способа изолировать одно от другого, без наворотов над ними, вроде react templates.</p>
+<aside class="notes"><p>А вот React-реализация такого компонента. Некоторые из ограничений такой реализации.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+```js
+class CounterView
+  extends React.Component<void, {name: string}, {count: number}> {
+  // ...
+  constructor(props: Props) { super(props) }
+```
+
+- Сильно связан с React.Component <!-- .element: class="fragment" -->
+- flowtype связан с React <!-- .element: class="fragment" -->
+- Конструктор занят под props <!-- .element: class="fragment" -->
+
+<aside class="notes"><p>React.Component - прямая завязка на реакт, без которой, к нему гвоздями прибитые flow и typescript не помогут выявить ошибки в props. Конструктор подчиняется неким негласным соглашением, что первый аргумент только props.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+```js
+class CounterView
+  // ...
+  render() {
+    const increment = () => this.setState(({count}) => {
+      count: count + 1
+    })
+  // ...
+  }
+```
+
+- setState <!-- .element: class="fragment" -->
+- view + state + logic <!-- .element: class="fragment" -->
+
+
+<aside class="notes"><p>setState - привязка к способу реакта менять состояние. Такой компонент нельзя использовать где-то вне реакта. Ключевой момент, тут нарушен принцип изоляции слоев - в UI присутствует и логика и верстка и состояние и нет способа изолировать одно от другого, без наворотов над ними, вроде react templates.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
 import counterService from './counterService'
 
 class CounterView extends React.Component {
-
 // ...
           count: counterService.add(this.state.count)
 // ...
@@ -340,8 +368,18 @@ class CounterView extends React.Component {
 }
 ```
 
-<aside class="notes"><p>Упрощают вычисления через shouldComponentUpdate, который позволяет делать тонкую оптимизацию, точнее неявно создавать баги и смешивать бизнес код с кодом, не имеющим отношения к исходной задаче. Костыль этот существует потому, что react начали проектировать с конца, с view слоя, а не со слоя данных. Если бы сперва слепили mobx, а на его основе сделали react, на большую часть фигни просто бы не тратили ресурсы: VDOM, setState, redux, router, все бы упростилось до нельзя. А пока, код, отвечающий за оптимизацию в вашем приложении, помогает вам скоротать немало часов, отлавливая баги на продакшене. А вы нашли тут багу, не? Вот flow не нашел.</p>
+<aside class="notes"><p>Упрощают вычисления через shouldComponentUpdate, который позволяет делать тонкую оптимизацию, точнее неявно создавать баги и смешивать бизнес код с кодом, не имеющим отношения к исходной задаче. Код, отвечающий за оптимизацию в вашем приложении, помогает вам скоротать немало часов, отлавливая баги на продакшене. А вы нашли тут багу, не? Вот flow не нашел.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
+- shouldComponentUpdate - костыль
+- React не проектировали <!-- .element: class="fragment" -->
+- Сперва mobx  <!-- .element: class="fragment" -->
+- VDOM, setState, router не нужны <!-- .element: class="fragment" -->
+- Redux - прослойка к mobx, а не к component <!-- .element: class="fragment" -->
+
+<aside class="notes"><p>Костыль этот существует потому, что react начали проектировать с конца, с view слоя, а не со слоя данных. Если бы сперва слепили mobx, а на его основе сделали react, на большую часть фигни просто бы не тратили ресурсы: VDOM, setState, router, все бы упростилось до нельзя. А redux - стал бы прослойкой к mobx.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+### Angular
+
 ```js
 @Component({
   template: '{{counter}}',
@@ -518,9 +556,9 @@ function CaseComponent(
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Монолитные анализаторы
 
-- Прибить jsx к flow <!-- .element: class="fragment" -->
+- Прибить flow к React.Component <!-- .element: class="fragment" -->
+- flow понимает jsx <!-- .element: class="fragment" -->
 - Что делать с типами в vue, deku? <!-- .element: class="fragment" -->
-- Прибить React.Component к flow <!-- .element: class="fragment" -->
 - Прибить angular2 templates к typescript <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Ребята из фейсбука придумали jsx и flow, который понимает этот самый jsx, относительно компонент с состоянием - flow просто прибит гвоздями к реакту. Там в коде есть прямая зависимость анализатора от extends React.Component. А что делать ребятам из deku, vue? Переизобретать свой flow, как они это сделали с redux (vuex)? А typescript еще более монолитный - это не только анализатор, а еще компилятор, для которого до недавнего времени нельзя было даже свой transformation-plugin написать. Например поддержка шаблонов angular2 в ts просто прибита гвоздями по аналогии с jsx, компилятор знает о фреймворке.</p>
@@ -543,6 +581,11 @@ function CaseComponent(
 <li>DI - это ключ. Фреймворк должен быть изолированным набором библиотек, связанных через инверсию зависимостей, каждая библиотека со своей маленькой ответственностью (никаких state и context в ui). 2. Проектируя фреймворк, думать в первую очередь о типах и безопасности на всех уровнях MVC. 3. Должна быть настоящая модульность, центральное состояние, как в redux, не годится. 4. Фреймворк должен помогать строить приложение из иерархически выстроеных мини-приложений, которые интегрируются в общую шину, ng-modules хороший пример, аналогов которому я не нашел в мире react. 5. Оптимизация в слое фреймворка, а не приложения. Стремиться делать фреймворк таким, что бы упрощался рефакторинг. Оставаться простым и искать компромис между хилыми возможностями js/babel/flow/typescript платформ и быть дружественным к DI.</li>
 </ol>
 </aside></script></section><section  data-markdown><script type="text/template">
+- Идеального инструмента нет <!-- .element: class="fragment" -->
+- Angular2 - шаг вперед <!-- .element: class="fragment" -->
+- Однако, не KISS <!-- .element: class="fragment" -->
+- Не сбалансировали сложность и качество <!-- .element: class="fragment" -->
+</script></section><section  data-markdown><script type="text/template">
 ### reactive-di
 
 <img src="i/mvc-rdi.svg" height="300" class="plain" />
@@ -621,9 +664,9 @@ class CounterHooks {
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="i/mvc.svg" height="300" width="310" class="plain" />
 
-- React - стримы в компоненте (View)
-- Mobx - ненавязчивые стримы (Model)
-- Reactive-di - все MVC внутри стримов (Relations)
+- React - стримы в компоненте (View) <!-- .element: class="fragment" -->
+- Mobx - ненавязчивые стримы (Model) <!-- .element: class="fragment" -->
+- Reactive-di - все MVC внутри стримов (Relations) <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Итог</p>
 </aside></script></section><section  data-markdown><script type="text/template">
