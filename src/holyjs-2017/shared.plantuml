@@ -23,11 +23,15 @@ skinparam object {
   BackgroundColor<<Computed>> D1DAFF
   BackgroundColor<<Hook>> 7AFFFF
   BackgroundColor<<Action>> FF7AFF
+
+  BackgroundColor<<Pure>> 7AFFFF
+  BackgroundColor<<Impure>> FF7A7A
+
   BorderColor 7A3A7A
   ArrowColor 7A7A7A
   FontColor 333333
   StereotypeFontColor 000033
-  StereotypeFontSize 14
+  StereotypeFontSize 10
 }
 
 skinparam component {
