@@ -252,9 +252,9 @@ class CounterView extends React.Component {
 
 <aside class="notes"><p>С этим можно бороться через React.context, правда он страшный, фейсбуковцы сами его стыдятся, поэтому не сильно документируют. Понятно почему, такая реализация внедрения зависимостей (dependency injection), черевата увлекательным отловом багов на продакшене, вместо скучных подсказок typescript или flow на этапе написания кода. PropTypes - это эмуляция типизации, лохматое легаси со времен отсутствия flow и принятия ts. Вообще это немного напрягает, если ошибки, связанные с типами приходится отлавливать в run time, хотя рубистам нормально.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-<img src="./i/jirn_pesec.jpg" class="plain" />
+<img src="./i/fat-cat.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Я тут все про реакт, да про реакт, а что с другими... Vue, aurelia, glimmer, deku, yo-yo, cyclejs, funnel... Стоит пожалуй только angular2 упомянуть, т.к. среди всего этого зоопарка только он чуть приподнялся на ступеньку.</p>
+<aside class="notes"><p>Вообще, ui-фреймворков очень много, я не буду всех их упоминать. Сказать стоит пожалуй только про angular2, т.к. несмотря на свои недостатки, он среди всего этого зоопарка чуть приподнялся на ступеньку.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Angular2 + контекст
 
@@ -291,7 +291,7 @@ CounterView._deps = [CounterService]
 - typescript + reflection = metadata <!-- .element: class="fragment" -->
 - Сыро и без спецификаций <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают ссылку на CounterService в класс CounterView. Такая наколеночная страшненькая рефлексия без всяких спецификаций, привнесенная в typescript. А среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект.</p>
+<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают ссылку на CounterService в класс CounterView. Это называется рефлексия, во многих язках она из коробки, здесь - привнесенная в typescript ради одного фреймворка, о качестве спецификаций говорить не приходится. Среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 
 ```js
@@ -310,17 +310,13 @@ class CounterView {
 }
 ```
 
-- Component = template + interface + state + logic <!-- .element: class="fragment" -->
+- Component = template + interface + view model + logic <!-- .element: class="fragment" -->
 - View model - управляет реактивностью <!-- .element: class="fragment" -->
 - Как прикрутить mobx, не поверх, а вместо <!-- .element: class="fragment" -->
 - changeDetection - часть монолита <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. Сам класс компонента ангулара это View Model. Однако в ней слишком много отвественности: она управляет ререндерингом компонента и эту логику никак нельзя отделить. Нельзя прикрутить mobx, вместо, а не поверх. Нельзя заменить changeDetection на свой, что может потребоваться, когда (не если, а когда) приложение на angular начнет тормозить.</p>
+<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. Сам класс компонента ангулара это View Model. Однако в ней слишком много отвественности: она управляет ререндерингом компонента и эту логику никак нельзя отделить. Нельзя прикрутить mobx, вместо, а не поверх changeDetection. Нельзя заменить changeDetection на свой, что может потребоваться, когда (не если, а когда) приложение на angular начнет тормозить.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-<img src="i/everywhere.png" height="500" class="plain" />
-
-Vendor lockin everywhere
-</script></section><section  data-markdown><script type="text/template">
 ### Переизобретение и копипаст
 
 - redux/vuex <!-- .element: class="fragment" -->
@@ -340,11 +336,16 @@ Vendor lockin everywhere
 
 <aside class="notes"><p>Ребята из фейсбука придумали jsx и flow, который понимает этот самый jsx, относительно компонент с состоянием - flow просто прибит гвоздями к реакту. Там в коде есть прямая зависимость анализатора от extends React.Component. А что делать ребятам из deku, vue? Переизобретать свой flow, как они это сделали с redux (vuex)? А typescript еще более монолитный - это не только анализатор, а еще компилятор, для которого до недавнего времени нельзя было даже свой transformation-plugin написать. Например поддержка шаблонов angular2 в ts просто прибита гвоздями по аналогии с jsx, компилятор знает о фреймворке.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
+<img src="i/everywhere.png" height="500" class="plain" />
+
+Vendor lock-in everywhere
+</script></section><section  data-markdown><script type="text/template">
 #### Оптимизация = конкуренция
 
 <img src="i/lineika.jpg" class="plain" />
 
 - Хайп 5 > 3 <!-- .element: class="fragment" -->
+- SOLID <!-- .element: class="fragment" -->
 - react fiber, vdom, prepack, inferno <!-- .element: class="fragment" -->
 - Не имеет отношения к решению <!-- .element: class="fragment" -->
 
@@ -403,7 +404,7 @@ class CounterView {
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="i/divan_na_kolesa.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Это я к тому, что оптимизация в коде приложения не нормальное явление, как нам пытаются преподнести из многочисленных маркетинговых докладов. Это признание несостоятельности идеи или реализации фреймворка касательно автоматической оптимизации. Идея определяет резервы оптимизации, а хорошие алгоритмы только помогут полнее их реализовать, как в Inferno.</p>
+<aside class="notes"><p>Это я к тому, что оптимизация в коде приложения не нормальное явление, как нам пытаются преподнести из многочисленных маркетинговых докладов. Это признание несостоятельности идеи или реализации фреймворка касательно автоматической оптимизации. Кто-нибудь помнит, как нам несколько лет назад был хайп о том, что VDOM в реакте вообще позволит не парится об оптимизации, все сделает за вас.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Mobx
 
@@ -453,7 +454,7 @@ class Counter {
 - Нет undefinded багов <!-- .element: class="fragment" -->
 - Нет декораторов <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Вот, например, как выглядит модель. Начальное состяние и контракт в одном флаконе. При таком подходе не может быть undefined-багов, не нужно дополнительных сериализаторов/десереализаторов. На основе моделей также делаются локализации, реактивные стили через jss. Не содержит декораторов или любых других зависимостей от фреймворка.</p>
+<aside class="notes"><p>Вот, например, как выглядит модель. Начальное состояние, селектор к нему и контракт в одном флаконе. При таком подходе не может быть undefined-багов, не нужно дополнительных сериализаторов/десереализаторов. На основе моделей также делаются локализации, реактивные стили через jss. Не содержит декораторов или любых других зависимостей от фреймворка.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### View
 
@@ -507,7 +508,7 @@ function CounterView(
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="./i/ternii.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Путь тернист и конца пока не видно. Как же прекратить войну фреймворков? Осознание проблем - это уже много. Надеюсь я смог показать, что в нашей любимой фронденд архитектуре есть проблемы, которые не заметны с близкого расстояния, но видны на больших. На мой взгляд, будущее за развитием mobx, за развитием и упрощением angular2, они здесь делают первые шаги. Подобные идеи заслуживают более яркого освещения среди нас, программистов. Я, в свою очередь, некоторые идеи реализовываю в reactive-di.</p>
+<aside class="notes"><p>Путь тернист и конца пока не видно. Как же прекратить войну фреймворков? Осознание проблем - это уже много. Надеюсь я смог показать, что в нашей любимой фронденд архитектуре есть проблемы, которые не заметны с близкого расстояния, но видны на больших. На мой взгляд, будущее за развитием mobx, за развитием и упрощением angular2, они здесь делают первые шаги. Идеи ненавязчивых потоков и инверсии зависимостей помогут если не прекратить, то локализовать войну. Я, в силу своего понимания, вышеозвученные характеристики реализовываю в пока еще сыром reactive-di. А всем вам желаю хотя бы раз в жизни написать свои ненавязчивые стримы по аналогии с mobx.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 - [github.com/zerkalica/reactive-di](https://github.com/zerkalica/reactive-di)
 </script></section><section  data-markdown><script type="text/template">
