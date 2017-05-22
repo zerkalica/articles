@@ -16,11 +16,11 @@
 
 ## Как прекратить войну фреймворков
 
-<aside class="notes"><p>Меня зовут Сергей. Я работаю фронтенд-разработчиком в компании QIWI. В QIWI много проектов на react, redux, mobx. Но есть один, в котором используется reactive-di. Эта библиотека для управления состоянием - моя попытка ответить на вопрос &quot;Как прекратить войну фреймворков&quot;. Зачем же понадобилось изобретать еще одну библиотеку?</p>
+<aside class="notes"><p>Меня зовут Сергей. До того, как заняться фронтенд-разработкой я разрабатывал много лет на php, т.е. я могу сравнить как оно было тогда там и как сейчас у нас, во фронтенде. В настоящее время работаю фронтенд-разработчиком в компании QIWI. У нас есть проекты с использованием react, inferno, redux, mobx. Обопщая свой опыт работы с этими и другими технологиями, я на частных примерах, сформулирую общую для всех современных фронтенд-фреймворков проблему. В конце расскажу, как я решил часть из них в reactive-di, библиотеке для управления состоянием.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### WTF
 
-- Dumb, smart?
+- Dumb, smart? <!-- .element: class="fragment" -->
 - view + state coupling <!-- .element: class="fragment" -->
 - setState, redux, mobx, rxjs? <!-- .element: class="fragment" -->
 - material или bootstrap для каждого <!-- .element: class="fragment" -->
@@ -32,7 +32,7 @@
 
 <img src="./i/good-the-bad-and-the-ugly.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Причины этого в некоторых недочетах проектирования фреймворках, я их назвал &quot;убийцах архитектуры&quot;. Т.е. подходах, которые усложняют взаимозаменяемость частей программы. Решение проблемы лежит в хорошей архитектуре.</p>
+<aside class="notes"><p>Причины этого в некоторых недочетах проектирования фреймворков или неправильных приоритов при проектировании, я их назвал &quot;убийцах архитектуры&quot;. Т.е. подходах, которые усложняют взаимозаменяемость частей программы и обмен решениями между разными экосистемами вокруг фреймворков. Решение проблемы лежит в хорошей архитектуре.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Эра монолитнго ядра
 
@@ -137,8 +137,7 @@ function CounterView({count}) {
 }
 ```
 
-- vendor lock in <!-- .element: class="fragment" -->
-- Переиспользование в реакт <!-- .element: class="fragment" -->
+- Как переиспользовать вне реакт <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Но если собрать с babel-preset-react то появится прямая зависимость от React. Нельзя переиспользовать чистый компонент в другом фреймворке, поддерживающим JSX. Однако, можно продолжить мысль и переиспользовать в рамках языка и среды, т.е. уменьшить долю каркаса, постоянной части до минимально возможной.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
@@ -151,7 +150,6 @@ function CounterView({count}, h: CreateElement) {
 ```
 
 - Ослабить связь <!-- .element: class="fragment" -->
-- createElement как аргумент <!-- .element: class="fragment" -->
 - babel plugin для автоматизации <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Для этого надо ослабить связь с createElement, например, добавив в конец аргумент, реализующий интефейс createElement. Такой компонент можно где угодно переиспользовать, задав соотвествующий h. Конечно усложняется написание компонента, надо добавлять аргумент, но это легко автоматизируется через babel плагин.</p>
@@ -171,35 +169,14 @@ class CounterView
   extends React.Component<void, {name: string}, {count: number}> {
 
   state = {count: 1}
-  constructor(props: Props) { super(props) }
-
-  render() {
-    const increment = () => this.setState(({count}) => {
-      count: count + 1
-    })
-
-    return <div>
-      {this.props.name}: {this.state.count}
-      <button onClick={increment}>Add</button>
-    </div>
-  }
-}
-```
-
-<aside class="notes"><p>А вот React-реализация такого компонента. Некоторые из ограничений такой реализации.</p>
-</aside></script></section><section  data-markdown><script type="text/template">
-```js
-class CounterView
-  extends React.Component<void, {name: string}, {count: number}> {
-
-  state = {count: 1}
 
   constructor(props: Props) { super(props) }
+  render() { /* ... */ }
 ```
 
 - Сильно связан с React.Component <!-- .element: class="fragment" -->
-- flowtype связан с React <!-- .element: class="fragment" -->
 - Конструктор занят под props <!-- .element: class="fragment" -->
+- flowtype связан с React <!-- .element: class="fragment" -->
 - Маскироваться под react <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>React.Component - прямая завязка на реакт, без которой, к нему гвоздями прибитые flow и typescript не помогут выявить ошибки в props. Конструктор подчиняется неким негласным соглашением, что первый аргумент только props.</p>
@@ -217,8 +194,8 @@ class CounterView
 
 - setState <!-- .element: class="fragment" -->
 - view + state + logic <!-- .element: class="fragment" -->
-- Сильная связанность: нету границ слоев <!-- .element: class="fragment" -->
-
+- Сильная связанность <!-- .element: class="fragment" -->
+- Размытые границы слоев <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>setState - привязка к способу реакта менять состояние. Такой компонент нельзя использовать где-то вне реакта. Ключевой момент, тут нарушен принцип изоляции слоев - в UI присутствует и логика и верстка и состояние. Мы не можем ткнуть пальцем и сказать, вот данные, а вот верстка - все вперемешку.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
@@ -269,13 +246,8 @@ class CounterView extends React.Component {
   templateUrl: './counter.component.html'
 })
 class CounterView {
-  counterService: CounterService
-  counter: number = 0
-  @Input name: string
 
-  constructor(counterService: CounterService) {
-    this.counterService = counterService
-  }
+  constructor(private counterService: CounterService) {}
 
   addCounter() {
     this.counter = this.counterService.add(this.counter)
@@ -301,7 +273,7 @@ Reflect.metadata("design:paramtypes", [CounterService, Object])
 - Interface as value <!-- .element: class="fragment" -->
 - DI = babel/flow, typescript, reflection <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают сигнатуру конструктора в метаданные.  Среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект. Это называется рефлексия, во многих языках она из коробки, в ts наколеночная, привнесенная ради одного фреймворка, о стандарте, скажем как о JSX, тут говорить не приходится. Например, итерфейсы просто заменяются на Object. Именно из-за слабого механизма reflaction и типизации DI был так непопулярен у нас на фронтенде.</p>
+<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают сигнатуру конструктора в метаданные.  Среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект. Это называется рефлексия, во многих языках она из коробки, в ts наколеночная, привнесенная ради одного фреймворка, о стандарте, скажем как о JSX, тут говорить не приходится. Например, итерфейсы просто заменяются на Object. Если сравнивать с C# то там есть interface as value. Именно из-за слабого развития инструментов и типизации, позволяющих делать reflection, DI был так непопулярен у нас на фронтенде.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 
 ```js
@@ -323,16 +295,16 @@ class CounterView {
 - Component = template + view model + logic <!-- .element: class="fragment" -->
 - Как прикрутить mobx, не поверх, а вместо <!-- .element: class="fragment" -->
 - changeDetection - часть монолита <!-- .element: class="fragment" -->
-- changeDetection, AOT, JIT, DI - Не KISS <!-- .element: class="fragment" -->
+- changeDetection, AOT, JIT, DI - не KISS <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. На ней слишком много отвественности. Нельзя прикрутить mobx, вместо, а не поверх changeDetection. Нельзя заменить changeDetection на свой, что может потребоваться как ради экспериментов, так и ради оптимизаций. Затруднен обмен решениями между фреймворками. Все это вместе, н евыглядит просто.</p>
+<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. На ней слишком много отвественности. Нельзя прикрутить mobx, вместо, а не поверх changeDetection. Нельзя заменить changeDetection на свой, что может потребоваться как ради экспериментов, так и ради оптимизаций. Затруднен обмен решениями между фреймворками. Все это вместе, не выглядит просто.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Переизобретение и копипаст
 
 vue only
 <img src="./i/vuex-noreact.png" height="400" class="plain" />
 
-<aside class="notes"><p>Следует сказать про копипаст. Я уже говорил про универсальный каркас, куда интегрируются сторонние либы. Так вот на фронтенде его нет, каждый переизобретает этот каркас в своем ядре, это следствие плохо спроектированной базы: связей и слоев. Поэтому vuex работает только с vue.</p>
+<aside class="notes"><p>В продолжении темы монолитов следует сказать про копипаст. Я уже говорил про универсальный каркас, куда интегрируются сторонние либы. Так вот на фронтенде его нет, каждый переизобретает этот каркас в своем ядре. Причем мыслят старыми котегориями безтипового js, без DI. Поэтому vuex работает только с vue.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 Deku + redux
 
