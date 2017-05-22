@@ -16,39 +16,42 @@
 
 ## Как прекратить войну фреймворков
 
-<aside class="notes"><p>Меня зовут Сергей. Я работаю фронтенд-разработчиком в компании QIWI. В QIWI много проектов на react, redux, mobx. Но есть один, в котором используется reactive-di. Эта библиотека для управления состоянием - моя попытка ответить на вопрос &quot;Как прекратить войну фреймворков&quot;. Т.е. зачем понадобилось изобретать еще одну библиотеку.</p>
+<aside class="notes"><p>Меня зовут Сергей. Я работаю фронтенд-разработчиком в компании QIWI. В QIWI много проектов на react, redux, mobx. Но есть один, в котором используется reactive-di. Эта библиотека для управления состоянием - моя попытка ответить на вопрос &quot;Как прекратить войну фреймворков&quot;. Зачем же понадобилось изобретать еще одну библиотеку?</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### WTF
 
-- material или bootstrap для каждого<!-- .element: class="fragment" -->
+- Dumb, smart?
 - view + state coupling <!-- .element: class="fragment" -->
 - setState, redux, mobx, rxjs? <!-- .element: class="fragment" -->
+- material или bootstrap для каждого <!-- .element: class="fragment" -->
 - vendor lock in <!-- .element: class="fragment" -->
-- angular, react, vue <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Как может проявлятся эта война, Например мы не можем сделать один универсальный material или bootstrap набор компонент. Потому что в разных фреймворках по-разному меняется состояние и этот механизм тесно связан с версткой. Нет слоя, абстрагирующего нас от redux или mobx, setState. Мы получаем vendor lock in. Берем мы angular, react, vue или что-то еще, мы сильно привязываем код приложения к этим фреймворкам.</p>
+<aside class="notes"><p>Что это за война такая? Например, мы делаем smart компонент на redux, а потом выясняется что его нужно переиспользовать в другом проекте с mobx. Если про JSX можно сказать, что это более-менее универсальный стандарт для нескольких фреймворков: inferno, vue с адаптером для jsx, deku. Потому что в разных фреймворках по-разному меняется состояние и этот механизм тесно связан с версткой. Нет слоя, абстрагирующего нас от redux или mobx, setState. Мы не можем сделать один универсальный полноценный material или bootstrap набор компонент. Мы получаем vendor lock in. Берем мы angular, react, vue или что-то еще, мы сильно привязываем код приложения к этим фреймворкам. Затруднен обмен решениями между фреймворками.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Убийцы архитектуры
 
 <img src="./i/good-the-bad-and-the-ugly.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Причины этого в &quot;убийцах архитектуры&quot;. Т.е. подходах, которые усложняют взаимозаменяемость частей приложения. Что бы было понятнее о чем я, сперва расскажу про архитектуру.</p>
+<aside class="notes"><p>Причины этого в некоторых недочетах проектирования фреймворках, я их назвал &quot;убийцах архитектуры&quot;. Т.е. подходах, которые усложняют взаимозаменяемость частей программы. Решение проблемы лежит в хорошей архитектуре.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Эра монолитнго ядра
 
-- Component = view + data + logic
+- Component = view + data + logic <!-- .element: class="fragment" -->
+- Поверх - redux, mobx <!-- .element: class="fragment" -->
+- Не поверх, а вместо <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Сейчас большинство js-фреймворков - это обычно одно ядро, вокруг которого накручено много всего. Например, react занимается и подготовкой представления и состояние там есть, и логика вокруг него накручена. В той или иной степени аналогичная тенденция и в angular, vue, glimmer и многих других. Десятки их, если не сотни.</p>
+<aside class="notes"><p>Сейчас большинство js-фреймворков - это обычно одно ядро, вокруг которого накручено много всего. Например, react занимается и подготовкой представления и состояние там есть, и логика вокруг него накручена. redux, mobx сторятся поверх этого ядра и управляют через него, это решения следствия, а не проблемы.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### От ядру к слоям
 
 - Легкий каркас, библиотека, интеграция <!-- .element: class="fragment" -->
-- Микросервисы, микроядерность, метафреймвоки, BYO <!-- .element: class="fragment" -->
+- Метафреймвоки <!-- .element: class="fragment" -->
+- Микросервисы, микроядерность <!-- .element: class="fragment" -->
 - PHP - Symfony, silex <!-- .element: class="fragment" -->
 - Java - Spring <!-- .element: class="fragment" -->
 - JS - Angular2 <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Если посмотреть, как развивались другие языки, например, java, php, то видно, что от монолитности постепенно переходят к концепции, когда фремворк - это очень легкий каркас для связи множества мелких библиотек через интерфейсы. Есть сторонняя библиотека, к ней пишется слой интеграции в фреймворк и дальше она используется как его часть. Даже говорят мета-фреймворк или BYO (BUILD YOUR OWN). Например: В PHP есть symfony, а есть его облегченная версия - silex, на тех же библиотеках, в Java аналогично с Spring. У нас, на фронтенде, наиболее близок к этой концепции - angular2, за исключением того, что сторонние библиотеки переизобретены командой angular2.</p>
+<aside class="notes"><p>Если посмотреть, как развивались другие языки, например, java, php, то видно, что от монолитности постепенно переходят к концепции, когда фремворк - это очень легкий каркас для связи множества мелких библиотек через интерфейсы. Есть сторонняя библиотека, к ней пишется слой интеграции в фреймворк и дальше она используется как его часть. Даже говорят мета-фреймворк. Например: В PHP есть symfony, а есть его облегченная версия - silex, на тех же библиотеках, в Java аналогично с Spring. У нас, на фронтенде, наиболее близок к этой концепции - angular2, за исключением того, что сторонние библиотеки переизобретены командой angular2.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="./i/microservices.jpg" class="plain" />
 
@@ -58,7 +61,7 @@
 
 <img src="i/mvc.svg" height="350" width="360" class="plain" />
 
-<aside class="notes"><p>Все части проложения можно разделить по слоям - данные, представления, логика. Если мы меняем view слой, то это затронет только его, если логику, то изменятся и представление, если структуру данных - это затронет все слои. Иными словами: что чаще меняем, то делаем менее связаным с остальными частями. Могут быть разные вариации это подхода (FLUX например), но данные, логика и представления обычно разделяются.</p>
+<aside class="notes"><p>Все части проложения можно разделить по слоям - данные, представления, логика. Что чаще меняем, то делаем менее связаным с остальными частями. Могут быть разные вариации это подхода (FLUX например), но данные, логика и представления обычно разделяются.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="i/chain-full.jpg" class="plain" />
 
@@ -71,7 +74,7 @@ class Some extends React.Component {
 
 ```
 
-<aside class="notes"><p>Я упомянул связи - стрелки. Они бывают сильные: когда extends React.Component или React.createElement замаскированный под jsx. Этот тип связей упрощает навигацию по проекту и отладку в отсутствии мощных IDE и др. инструментов разработчика, т.к. очевидно, что это за реализация.</p>
+<aside class="notes"><p>Я упомянул связи - стрелки. Они бывают сильные: когда extends React.Component или React.createElement замаскированный под jsx. Говорят, что код жесткий. Этот тип связей упрощает навигацию по проекту и отладку в отсутствии мощных IDE и др. инструментов разработчика, т.к. очевидно, что это за реализация. Можно посмотреть реализацию, по импортам попрыгать.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="i/chain-link.jpg" class="plain" />
 
@@ -85,14 +88,13 @@ function MyComponent(props: { user: IUser }) {
 }
 ```
 
-<aside class="notes"><p>Так и слабые: интерфейсы на props. Когда не очивдно, что за реализация IUser, она где то в другом месте задается. Для масштабирования и поддержки большого приложения важны как раз слабые связи. Проблема в том, что для работы с ними важны мощные инструменты разработки, Java+Spring+IDEA. Иначе усложняется навигация и рефакторинг такого кода. Поэтому переход к слабой связанности - это вопрос взросления экосистемы и усложнения задач.</p>
+<aside class="notes"><p>Так и слабые: интерфейсы на props. Когда не очивдно, что за реализация IUser, она где то в другом месте задается. Для масштабирования и поддержки большого приложения важны как раз слабые связи. Проблема в том, что для работы с ними важны мощные инструменты разработки, IDE, flow, typescript. Иначе усложняется навигация и рефакторинг такого кода. Поэтому переход к слабой связанности - это вопрос взросления экосистемы и усложнения задач.  В JAVA, PHP переход был уже много лет назад, а у нас, во фронтенде, только начинает что-то появляться в виде ангулар2.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Функции
 
 - f(x) <!-- .element: class="fragment" -->
 - f(context)(x) <!-- .element: class="fragment" -->
 - new F(context).method(x) <!-- .element: class="fragment" -->
-- Инициализация - установка context <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Есть еще базовые кирпичи - это функции, которые мы рассовываем по слоям и связываем между собой. Сами функции бывают как чистые, так и с некоторым контекстом. Классы - это набор функций с контекстом в виде this.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
@@ -150,7 +152,7 @@ function CounterView({count}, h: CreateElement) {
 
 - Ослабить связь <!-- .element: class="fragment" -->
 - createElement как аргумент <!-- .element: class="fragment" -->
-- babel plugin для автоматизации инжекции <!-- .element: class="fragment" -->
+- babel plugin для автоматизации <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Для этого надо ослабить связь с createElement, например, добавив в конец аргумент, реализующий интефейс createElement. Такой компонент можно где угодно переиспользовать, задав соотвествующий h. Конечно усложняется написание компонента, надо добавлять аргумент, но это легко автоматизируется через babel плагин.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
@@ -198,6 +200,7 @@ class CounterView
 - Сильно связан с React.Component <!-- .element: class="fragment" -->
 - flowtype связан с React <!-- .element: class="fragment" -->
 - Конструктор занят под props <!-- .element: class="fragment" -->
+- Маскироваться под react <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>React.Component - прямая завязка на реакт, без которой, к нему гвоздями прибитые flow и typescript не помогут выявить ошибки в props. Конструктор подчиняется неким негласным соглашением, что первый аргумент только props.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
@@ -214,9 +217,10 @@ class CounterView
 
 - setState <!-- .element: class="fragment" -->
 - view + state + logic <!-- .element: class="fragment" -->
+- Сильная связанность: нету границ слоев <!-- .element: class="fragment" -->
 
 
-<aside class="notes"><p>setState - привязка к способу реакта менять состояние. Такой компонент нельзя использовать где-то вне реакта. Ключевой момент, тут нарушен принцип изоляции слоев - в UI присутствует и логика и верстка и состояние.</p>
+<aside class="notes"><p>setState - привязка к способу реакта менять состояние. Такой компонент нельзя использовать где-то вне реакта. Ключевой момент, тут нарушен принцип изоляции слоев - в UI присутствует и логика и верстка и состояние. Мы не можем ткнуть пальцем и сказать, вот данные, а вот верстка - все вперемешку.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
 import counterService from './counterService'
@@ -227,8 +231,8 @@ class CounterView extends React.Component {
 // ...
 }
 ```
-
-- Сиглтоны не дают подменить counterService <!-- .element: class="fragment" -->
+- count + 1 в сервис <!-- .element: class="fragment" -->
+- Как подменить counterService <!-- .element: class="fragment" -->
 - Требуется рефакторинг вместо расширения <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>Мы прям в компоненте писали count + 1, а что если надо вынести эту логику в отдельный counterService? Можно все фигачить на синглтонах и импортах и сделать жесткую связь с ним. Но, допустим выделили компонент в стороннюю библиотеку, заиспользовали в 10 проектах, а в 11м потребовалось дополнить метод add логикой валидации. Тут жесткая связь начинает нам это мешать делать, приходится рефакторить, добавлять публичное свойство. Ключевой момент - масштабирование идет не через расширение, а через рефакторинг.</p>
@@ -248,9 +252,10 @@ class CounterView extends React.Component {
 
 - Страшный DI <!-- .element: class="fragment" -->
 - PropTypes - эмуляция типизации <!-- .element: class="fragment" -->
+- Provider в redux-react <!-- .element: class="fragment" -->
 - Плохо работает в typescript <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>С этим можно бороться через React.context, правда он страшный, фейсбуковцы сами его стыдятся, поэтому не сильно документируют. Понятно почему, такая реализация внедрения зависимостей (dependency injection), черевата увлекательным отловом багов на продакшене, вместо скучных подсказок typescript или flow на этапе написания кода. PropTypes - это эмуляция типизации, лохматое легаси со времен отсутствия flow и принятия ts. Вообще это немного напрягает, если ошибки, связанные с типами приходится отлавливать в run time, хотя рубистам нормально.</p>
+<aside class="notes"><p>С этим можно бороться через React.context, правда он страшный, фейсбуковцы сами его стыдятся, поэтому не сильно документируют. Понятно почему, такая реализация внедрения зависимостей (dependency injection), черевата увлекательным отловом багов на продакшене, вместо скучных подсказок typescript или flow на этапе написания кода. PropTypes - это эмуляция типизации, лохматое легаси со времен отсутствия flow и принятия ts. Маскируют это все дело в каком-нибудь redux-react через Provider.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="./i/fat-cat.jpg" height="500" class="plain" />
 
@@ -281,17 +286,22 @@ class CounterView {
 <aside class="notes"><p>Ребята из команды angular2 идею контекста сделали центральной, его не стыдятся, а гордо показывают в конструкторе. В итоге это гораздо ближе к нативному синтаксису typescript. Правда без типов это все не очень удобно использовать.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ```js
-// ...
+
+interface ITest {}
+
 class CounterView {
-  // ...
+  constructor(private cs: CounterService, test: ITest) {}
 }
-CounterView._deps = [CounterService]
+Reflect.metadata("design:paramtypes", [CounterService, Object])
 ```
 
 - typescript + reflection = metadata <!-- .element: class="fragment" -->
-- Сыро и без спецификаций <!-- .element: class="fragment" -->
+- ITest -> Object. <!-- .element: class="fragment" -->
+-  <!-- .element: class="fragment" --> ``` bind<ITest>().to<SomeClass>(); ```
+- Interface as value <!-- .element: class="fragment" -->
+- DI = babel/flow, typescript, reflection <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают ссылку на CounterService в класс CounterView. Это называется рефлексия, во многих язках она из коробки, здесь - привнесенная в typescript ради одного фреймворка, о качестве спецификаций говорить не приходится. Среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект.</p>
+<aside class="notes"><p>Что бы магия заработала, ангуларовцы слегка прогнув микрософт с их тайпскриптом, записывают сигнатуру конструктора в метаданные.  Среда исполнения, т.е. dependency injection ангулара, по этой ссылке подсовывает готовый объект. Это называется рефлексия, во многих языках она из коробки, в ts наколеночная, привнесенная ради одного фреймворка, о стандарте, скажем как о JSX, тут говорить не приходится. Например, итерфейсы просто заменяются на Object. Именно из-за слабого механизма reflaction и типизации DI был так непопулярен у нас на фронтенде.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 
 ```js
@@ -310,22 +320,53 @@ class CounterView {
 }
 ```
 
-- Component = template + interface + view model + logic <!-- .element: class="fragment" -->
-- View model - управляет реактивностью <!-- .element: class="fragment" -->
+- Component = template + view model + logic <!-- .element: class="fragment" -->
 - Как прикрутить mobx, не поверх, а вместо <!-- .element: class="fragment" -->
 - changeDetection - часть монолита <!-- .element: class="fragment" -->
+- changeDetection, AOT, JIT, DI - Не KISS <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. Сам класс компонента ангулара это View Model. Однако в ней слишком много отвественности: она управляет ререндерингом компонента и эту логику никак нельзя отделить. Нельзя прикрутить mobx, вместо, а не поверх changeDetection. Нельзя заменить changeDetection на свой, что может потребоваться, когда (не если, а когда) приложение на angular начнет тормозить.</p>
+<aside class="notes"><p>Один к одному сцепили шаблон, описание контракта к этому шаблону, модель, и логику по работе с ней. На ней слишком много отвественности. Нельзя прикрутить mobx, вместо, а не поверх changeDetection. Нельзя заменить changeDetection на свой, что может потребоваться как ради экспериментов, так и ради оптимизаций. Затруднен обмен решениями между фреймворками. Все это вместе, н евыглядит просто.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Переизобретение и копипаст
 
-- redux/vuex <!-- .element: class="fragment" -->
-- glimmer = component + mobx <!-- .element: class="fragment" -->
-- deku = component + redux <!-- .element: class="fragment" -->
-- {React, Vue, Inferno, Redux, Mobx}-router <!-- .element: class="fragment" -->
-- inferno-{redux, mobx} <!-- .element: class="fragment" -->
+vue only
+<img src="./i/vuex-noreact.png" height="400" class="plain" />
 
-<aside class="notes"><p>Раз уж говорили про роутер, следует сказать про копипаст, как следствие плохо спроектированной базы: связей и слоев. redux переизобретен в vuex. роутеры переизобретаются в разных сочетаниях. Inferno, пытаясь отхватить кусок пирога React вообще породил сранное явление - конвертацию модулей реакта.</p>
+<aside class="notes"><p>Следует сказать про копипаст. Я уже говорил про универсальный каркас, куда интегрируются сторонние либы. Так вот на фронтенде его нет, каждый переизобретает этот каркас в своем ядре, это следствие плохо спроектированной базы: связей и слоев. Поэтому vuex работает только с vue.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+Deku + redux
+
+```js
+// Define a state-less component
+let MyButton = {
+  render: ({ props, children, dispatch }) => {
+    return <button onClick={log(dispatch)}>{children}</button>
+  }
+}
+
+// Create a Redux store to handle all UI actions and side-effects
+let store = createStore(reducer)
+
+// Create an app that can turn vnodes into real DOM elements
+let render = createApp(document.body, store.dispatch)
+```
+
+<aside class="notes"><p>Deku прибит к redux и не работает без него</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+- react-router
+- react-router-redux <!-- .element: class="fragment" -->
+- mobx-react-router <!-- .element: class="fragment" -->
+- inferno-router <!-- .element: class="fragment" -->
+- vue-router <!-- .element: class="fragment" -->
+- vuex-router-sync <!-- .element: class="fragment" -->
+
+<aside class="notes"><p>Роутеры переизобретаются в разных сочетаниях тоже по причине не продуманности базовых вещей. Они делают все одно и тоже, в зависимости от пути в строке бразурера отдают компонент. А копипастить код приходится из-за отсутствия универсальых интерфейсов интеграции этих библиотек c состоянием.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+- inferno-redux
+- inferno-mobx <!-- .element: class="fragment" -->
+- inferno-test-utils <!-- .element: class="fragment" -->
+
+<aside class="notes"><p>Inferno, пытаясь отхватить кусок пирога React вообще породил сранное явление - конвертацию модулей реакта.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Монолитные анализаторы
 
@@ -339,13 +380,15 @@ class CounterView {
 <img src="i/everywhere.png" height="500" class="plain" />
 
 Vendor lock-in everywhere
-</script></section><section  data-markdown><script type="text/template">
+
+<aside class="notes"><p>Механизма обмена решениями между фреймворками нет. Выбрав один путь - придется и выбрать экосистему вокруг фреймворка.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
 #### Оптимизация = конкуренция
 
 <img src="i/lineika.jpg" class="plain" />
 
 - Хайп 5 > 3 <!-- .element: class="fragment" -->
-- SOLID <!-- .element: class="fragment" -->
+- Архитектура: связанность, сцепленность <!-- .element: class="fragment" -->
 - react fiber, vdom, prepack, inferno <!-- .element: class="fragment" -->
 - Не имеет отношения к решению <!-- .element: class="fragment" -->
 
@@ -428,19 +471,59 @@ class Store {
 
 - cellx, derivablejs, glimmer, mol
 - Обратился к свойству - подписался<!-- .element: class="fragment" -->
-- Ранняя оптимизация <!-- .element: class="fragment" -->
-- Точность без VDOM и changeDetection <!-- .element: class="fragment" -->
-- Проблема unboxing <!-- .element: class="fragment" -->
+- Ранняя точная оптимизация без VDOM <!-- .element: class="fragment" -->
+- ORM <!-- .element: class="fragment" -->
+- redux на основе mobx (mobx-state-tree) <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Это все реализации ненавязчивых стримов (derivable, cellx, mol_atom). Подписка компонента на изменения в данных происходит в момент обращения к своствам. Оптимизация происходит раньше, в слое данных, а не в VDOM (react) или в компонентах (angular). В подобных решения VDOM не нужен. Правда может возникнуть проблема unboxing, - подписка происходит там, где извлекаются данные из стрима.</p>
+<aside class="notes"><p>Это все реализации ненавязчивых стримов (derivable, cellx, mol_atom). Подписка компонента на изменения в данных происходит в момент обращения к своствам. Оптимизация происходит раньше, в слое данных, а не в VDOM (react) или в компонентах (angular). В подобных решения VDOM не нужен.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="i/mvc.svg" height="300" width="310" class="plain" />
 
-- React - View + setState <!-- .element: class="fragment" -->
-- Mobx - Model + ненавязчивые стримы <!-- .element: class="fragment" -->
+- React - View, setState <!-- .element: class="fragment" -->
+- Mobx - Model, ненавязчивые стримы <!-- .element: class="fragment" -->
 - Reactive-di - Relations, все внутри стримов <!-- .element: class="fragment" -->
 
 <aside class="notes"><p>rdi - представьте, вот используем мы rxjs, весь код внутри стримов, а что будет если цветовую схему ide выкрутить так, что б rxjs конструкции слились с фоном? Если вы знаете решения в любом языке, которые на службу реактивности ставят контракты, дайте мне знать, пожалуйста.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+### View
+
+```js
+class Counter { count = 0 }
+
+function Hello(
+    // public
+    {text}: { text: string; },
+
+    // private
+    {counter}: { counter: Counter; }
+) {
+    return <div>
+        <h1>{text} {counter.count}</h1>
+    </div>
+}
+```
+
+<aside class="notes"><p>Чистая верстка, с контрактом и разделением на публичный интрефейс (props) и приватный (context). Также, никаких декораторов и зависимостей от фреймворков.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+```js
+function Counter() { this.count = 0 }
+
+function Hello(_ref, _ref2, _t) {
+    var text = _ref.text;
+    var counter = _ref2.counter;
+
+    return _t.h(2, 'div', null, [
+      _t.h(2, 'h1', null, ['count ', counter.count])
+    ]);
+}
+
+Hello._r2 = 1;
+Hello._r1 = [{ counter: Counter }];
+```
+
+context = DI + metadata
+
+<aside class="notes"><p>С помощью babel-плагина к компоненту добавляются метаданные. По метаданным движок reactive-di отличает свои компоненты от реактовых, решается проблема легаси.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 ### Model
 
@@ -456,62 +539,33 @@ class Counter {
 
 <aside class="notes"><p>Вот, например, как выглядит модель. Начальное состояние, селектор к нему и контракт в одном флаконе. При таком подходе не может быть undefined-багов, не нужно дополнительных сериализаторов/десереализаторов. На основе моделей также делаются локализации, реактивные стили через jss. Не содержит декораторов или любых других зависимостей от фреймворка.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
-### View
+### Lifecycle
 
 ```js
-function CounterView(
-    // public:
-    {name}: { name: string; },
+@hooks(Counter)
+class CounterHooks {
+  pull(counter: Counter): Observable<Counter> {
 
-    // private:
-    {counter, actions}: {
-      counter: Counter;
-      actions: CounterActions;
-    }
-) {
-    return <div>
-      {name} {counter.count}
-      <button onClick={actions.add}>Add</button>
-    </div>
-}
-```
+    let count = counter.count
 
-<aside class="notes"><p>Чистая верстка, с контрактом и разделением на публичный интрефейс (props) и приватный (context). Также, никаких декораторов и зависимостей от фреймворков.</p>
-</aside></script></section><section  data-markdown><script type="text/template">
-### Action
-
-```js
-@actions class CounterActions {
-  _counter: Counter
-
-  constructor(counter: Counter) {
-    this._counter = counter
-  }
-
-  add() {
-    src(this._counter).set({
-      count: this._counter.count++
+    return new Observable((observer: Observer<Count>) => {
+      setTimeout(() => observer.next(++count), 1000)
     })
   }
 }
 ```
 
-<aside class="notes"><p>Класс, который предоставляют компоненту методы, по сути экшены, меняющие состояние: тут может быть валидация, запрос на сервер и т.д. В отличие от традиционного DI, зависимость может быть от данных (в ангуларе это называется ValueProvider), только здесь это value реактивно. При выполнении метода add, CounterActions переинициализируется с новым значением, т.е. reactive-di это стримы, упрятаные внутрь di.</p>
-</aside></script></section><section  data-markdown><script type="text/template">
-- DI для связей: data - ui - business logic
-- Ненавязчивые потоки (mobx)<!-- .element: class="fragment" -->
-- Экосистема: типы, поддержка в ide: JSX<!-- .element: class="fragment" -->
-- Высокоуровневые интерфейсы: ng-modules <!-- .element: class="fragment" -->
-- Баласировать между KISS и di-окружением<!-- .element: class="fragment" -->
+- Отражение lifecycle в моделях <!-- .element: class="fragment" -->
+- Спец. сервисы в hooks <!-- .element: class="fragment" -->
 
-<aside class="notes"><p>Я попытался выделить 1. DI - это ключ. Фреймворк должен быть изолированным набором библиотек, связанных через инверсию зависимостей, каждая библиотека со своей маленькой ответственностью (никаких state и context в ui). 2. Проектируя фреймворк, думать в первую очередь о типах и безопасности на всех уровнях MVC. 3. Должна быть настоящая модульность, центральное состояние, как в redux, не годится. 4. Фреймворк должен помогать строить приложение из иерархически выстроеных мини-приложений, которые интегрируются в общую шину, ng-modules хороший пример, аналогов которому я не нашел в мире react. 5. Оптимизация в слое фреймворка, а не приложения. Стремиться делать фреймворк таким, что бы упрощался рефакторинг. Оставаться простым и искать компромис между хилыми возможностями js/babel/flow/typescript платформ и быть дружественным к DI.</p>
+<aside class="notes"><p>Кроме традиционных способов менять состояние через экшены-сервисы, часто бывает нужно так, компонент отрендерился и вам нужно актуализировать его состояние. Тут помогают механизмы, которые есть в некоторых ORM на других языках (Doctrine, Hibernate). Логика актуализации состояния Counter задается в таком сервисе. Когда первый раз отрендерится хотя бы один компонент, использующий Counter, выполнится метод pull и Observable c этого момента будет управлять Counter ом. В mobx аналогично сделан хелпер where.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 <img src="./i/ternii.jpg" height="500" class="plain" />
 
-<aside class="notes"><p>Путь тернист и конца пока не видно. Как же прекратить войну фреймворков? Осознание проблем - это уже много. Надеюсь я смог показать, что в нашей любимой фронденд архитектуре есть проблемы, которые не заметны с близкого расстояния, но видны на больших. На мой взгляд, будущее за развитием mobx, за развитием и упрощением angular2, они здесь делают первые шаги. Идеи ненавязчивых потоков и инверсии зависимостей помогут если не прекратить, то локализовать войну. Я, в силу своего понимания, вышеозвученные характеристики реализовываю в пока еще сыром reactive-di. А всем вам желаю хотя бы раз в жизни написать свои ненавязчивые стримы по аналогии с mobx.</p>
+<aside class="notes"><p>Готового решения, которое поможет прекратить войну фреймворков, пока не видно. Осознание проблем - это уже много. Надеюсь я смог показать, что в нашей любимой фронденд архитектуре есть проблемы, которые не заметны с близкого расстояния, но видны на большом. Идеи ненавязчивых потоков и инверсии зависимостей, правильной расстановки приоритетов при проектировании слоев помогут прекратить войну. Mobx и angular2 здесь хорошо продвинулись. Я, вышеозвученные характеристики реализовываю в пока еще сыром reactive-di. А всем желаю уделять больше внимания базовым, идейным вещам, а меньше маркетинговым - хайповым, тогда наша работа станет комфортнее, а светлое будущее ближе.</p>
 </aside></script></section><section  data-markdown><script type="text/template">
 - [github.com/zerkalica/reactive-di](https://github.com/zerkalica/reactive-di)
-</script></section><section  data-markdown><script type="text/template">
+</script></section><section  data-markdown><script type="text/template"></script></section><section  data-markdown><script type="text/template">
 - Идеального инструмента нет <!-- .element: class="fragment" -->
 - Но будет в ближайшие годы <!-- .element: class="fragment" -->
 - Angular2 - шаг вперед <!-- .element: class="fragment" -->
@@ -522,7 +576,15 @@ function CounterView(
 <img src="i/mvc-rdi.svg" height="300" class="plain" />
 
 <aside class="notes"><p>В начале я упоминал reactive-di. Просто несколько штрихов наброшу</p>
-</aside></script></section><section  data-markdown><script type="text/template"></script></section><section  data-markdown><script type="text/template"></script></section><section  data-markdown><script type="text/template">
+</aside></script></section><section  data-markdown><script type="text/template">
+- DI для связей: data - ui - business logic
+- Ненавязчивые потоки (mobx, reactive-di)<!-- .element: class="fragment" -->
+- Экосистема: типы, поддержка в ide: JSX<!-- .element: class="fragment" -->
+- Высокоуровневые интерфейсы: ng-modules <!-- .element: class="fragment" -->
+- Оставаться KISS<!-- .element: class="fragment" -->
+
+<aside class="notes"><p>Я попытался выделить 1. DI - это ключ. Фреймворк должен быть изолированным набором библиотек, связанных через инверсию зависимостей, каждая библиотека со своей маленькой ответственностью (никаких state и context в ui). 2. Проектируя фреймворк, думать в первую очередь о типах и безопасности на всех уровнях MVC. 3. Должна быть настоящая модульность, центральное состояние, как в redux, не годится. 4. Фреймворк должен помогать строить приложение из иерархически выстроеных мини-приложений, которые интегрируются в общую шину, ng-modules хороший пример, аналогов которому я не нашел в мире react. 5. Оптимизация в слое фреймворка, а не приложения. Стремиться делать фреймворк таким, что бы упрощался рефакторинг. Оставаться простым и искать компромис между хилыми возможностями js/babel/flow/typescript платформ и быть дружественным к DI.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
 ### redux
 
 - Шаблонный код <!-- .element: class="fragment" -->
@@ -658,6 +720,26 @@ class CounterHooks {
 ```
 
 <aside class="notes"><p>Часто бывает так, компонент отрендерился и вам нужно актуализировать его состояние. Тут помогают механизмы, которые есть в некоторых ORM на других языках (Doctrine, Hibernate). Логика актуализации состояния Counter задается в таком сервисе. Когда первый раз отрендерится хотя бы один компонент, использующий Counter, выполнится метод pull и Observable c этого момента будет управлять Counter ом. В mobx аналогично сделан хелпер where, в cellx и mol есть похожие механизмы.</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+### Action
+
+```js
+@actions class CounterActions {
+  _counter: Counter
+
+  constructor(counter: Counter) {
+    this._counter = counter
+  }
+
+  add() {
+    src(this._counter).set({
+      count: this._counter.count++
+    })
+  }
+}
+```
+
+<aside class="notes"><p>Класс, который предоставляют компоненту методы, по сути экшены, меняющие состояние: тут может быть валидация, запрос на сервер и т.д. В отличие от традиционного DI, зависимость может быть от данных (в ангуларе это называется ValueProvider), только здесь это value реактивно. состоянием CounterActions управляет reactive-di. При выполнении метода add, CounterActions переинициализируется с новым значением.</p>
 </aside></script></section></div>
         </div>
 
