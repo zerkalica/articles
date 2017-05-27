@@ -368,7 +368,7 @@ container.bind<interfaces.Newable<Katana>>("Newable<Katana>").toConstructor<Kata
             // options from URL query string
             var queryOptions = Reveal.getQueryHash() || {};
 
-            var options = {"showNotes":true,"slideNumber":true,"theme":"custom","transition":"none"};
+            var options = {"showNotes":false,"slideNumber":true,"theme":"custom","transition":"none"};
             options = extend(defaultOptions, options, queryOptions);
             Reveal.initialize(options);
         </script>

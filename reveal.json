@@ -1,5 +1,5 @@
 {
-    "showNotes": true,
+    "showNotes": false,
     "slideNumber": true,
     "theme": "custom",
     "transition": "none"

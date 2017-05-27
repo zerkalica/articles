@@ -22,10 +22,10 @@ object TodoEditView <<Pure>> {
   userId: number
 }
 
-AppView <-right- TodosView
+AppView -right-> TodosView
 
-TodosView <-- TodoView
+TodosView --> TodoView
 
-TodoView <-left- TodoEditView
+TodoView -left-> TodoEditView
 
 @enduml
