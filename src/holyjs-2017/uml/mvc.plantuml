@@ -1,0 +1,14 @@
+@startuml
+
+!include ./shared.plantuml
+
+() Model <<Source>>
+() View <<Component>>
+() Controller <<Action>>
+
+View <-- Model
+View <-- Controller
+
+Controller <-right- Model
+
+@enduml

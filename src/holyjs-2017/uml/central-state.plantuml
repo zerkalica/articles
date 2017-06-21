@@ -1,0 +1,19 @@
+@startuml
+
+!include ./shared.plantuml
+
+() Model #7F7
+() Redux
+() RxJS
+() Component #F77
+
+Model <-- Redux
+Model <-- RxJS
+
+Component --> Model
+Component ..> Redux
+Component ..> RxJS
+
+Model --> Component
+
+@enduml

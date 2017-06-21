@@ -1,0 +1,17 @@
+@startuml
+
+!include ./shared.plantuml
+
+() Model <<Source>>
+() View <<Component>>
+() ActionController <<Action>>
+() LifecycleController <<Hook>>
+
+View <.. LifecycleController
+View <-- Model
+View <-- ActionController
+
+ActionController <-left- Model
+LifecycleController <-right- Model
+
+@enduml

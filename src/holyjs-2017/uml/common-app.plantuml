@@ -1,0 +1,27 @@
+@startuml
+
+!include ./shared.plantuml
+
+() Todos <<Source>>
+() User <<Source>>
+() UserId <<Computed>>
+() FilteredTodos <<Computed>>
+() UserService <<Service>>
+() TodosFilter <<Source>>
+() TodosView <<Component>>
+() App <<Component>>
+() TodoView <<Component>>
+
+UserId <--User
+
+FilteredTodos <-- Todos
+FilteredTodos <- UserId
+FilteredTodos <-- TodosFilter
+
+TodosView <-- FilteredTodos
+TodosView <-- UserService
+TodosView <-- TodoView
+
+App <- TodosView
+
+@enduml

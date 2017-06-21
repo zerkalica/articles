@@ -1,0 +1,31 @@
+@startuml
+
+!include ./shared.plantuml
+
+object AppView <<Impure>> {
+  todos: string[]
+  userId: number
+}
+
+object TodosView <<Pure>> {
+  todos: string[]
+  userId: number
+}
+
+object TodoView <<Pure>> {
+  title: string
+  userId: number
+}
+
+object TodoEditView <<Pure>> {
+  title: string
+  userId: number
+}
+
+AppView -right-> TodosView
+
+TodosView --> TodoView
+
+TodoView -left-> TodoEditView
+
+@enduml

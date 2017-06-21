@@ -2,14 +2,10 @@
   "name": "articles",
   "version": "1.0.0",
   "description": "Some my presentaitons",
-  "bin": {
-    "articles-builder": "bin/articles-builder"
-  },
   "scripts": {
     "test": "exit 0",
-    "start": "reveal-md --highlight-theme dracula --theme custom -w",
-    "s": "npm run start -- src/holyjs-2017/holyjs-2017.md",
-    "build": "bin/articles-builder"
+    "start": "reveal-multi --server",
+    "build": "reveal-multi"
   },
   "repository": {
     "type": "git",
@@ -32,10 +28,7 @@
   },
   "homepage": "https://github.com/zerkalica/articles#readme",
   "devDependencies": {
-    "fs-extra": "^3.0.1",
-    "husky": "^0.13.3",
     "phantomjs": "^2.1.7",
-    "reveal-md": "^0.3.0",
-    "rimraf": "^2.6.1"
+    "reveal-multi": "^1.0.1"
   }
 }
