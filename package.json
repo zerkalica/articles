@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Some my presentaitons",
   "scripts": {
+    "precommit": "npm run build",
     "test": "exit 0",
     "start": "reveal-multi --server",
     "build": "reveal-multi"
@@ -28,7 +29,8 @@
   },
   "homepage": "https://github.com/zerkalica/articles#readme",
   "devDependencies": {
+    "husky": "^0.13.4",
     "phantomjs": "^2.1.7",
-    "reveal-multi": "^1.0.1"
+    "reveal-multi": "^1.0.2"
   }
 }
