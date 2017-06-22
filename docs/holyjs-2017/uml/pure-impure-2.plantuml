@@ -1,0 +1,28 @@
+@startuml
+
+!include ./shared.plantuml
+
+() App <<Impure>>
+() TodosView <<Pure>>
+() TodoView <<Pure>>
+() Input <<Pure>>
+() Button <<Pure>>
+() OkButton <<Pure>>
+() CancelButton <<Pure>>
+
+OkButton <-- Button
+CancelButton <-right- Button
+
+App <-left- TodosView
+
+
+TodosView <-- TodoView
+TodosView <-- Input
+TodosView <-- OkButton
+
+
+TodoView <-left- Input
+TodoView <-right- OkButton
+TodoView <-- CancelButton
+
+@enduml
