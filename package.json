@@ -29,8 +29,8 @@
   },
   "homepage": "https://github.com/zerkalica/articles#readme",
   "devDependencies": {
-    "husky": "^0.13.4",
-    "reveal-multi": "^1.0.2"
+    "husky": "^0.14.1",
+    "reveal-multi": "^1.0.4"
   },
   "dependencies": {}
 }
